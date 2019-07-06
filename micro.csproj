@@ -5,4 +5,8 @@
     <TargetFramework>netcoreapp2.2</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MegaApiClient" Version="1.7.1" />
+  </ItemGroup>
+
 </Project>
