@@ -1,32 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\admin\\Documents\\CSharp\\micro\\micro.csproj": {}
+    "/home/peter/Documents/projects/dotnet/micro/micro.csproj": {}
   },
   "projects": {
-    "C:\\Users\\admin\\Documents\\CSharp\\micro\\micro.csproj": {
+    "/home/peter/Documents/projects/dotnet/micro/micro.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\admin\\Documents\\CSharp\\micro\\micro.csproj",
+        "projectUniqueName": "/home/peter/Documents/projects/dotnet/micro/micro.csproj",
         "projectName": "micro",
-        "projectPath": "C:\\Users\\admin\\Documents\\CSharp\\micro\\micro.csproj",
-        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\admin\\Documents\\CSharp\\micro\\obj\\",
+        "projectPath": "/home/peter/Documents/projects/dotnet/micro/micro.csproj",
+        "packagesPath": "/home/peter/.nuget/packages/",
+        "outputPath": "/home/peter/Documents/projects/dotnet/micro/obj/",
         "projectStyle": "PackageReference",
-        "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
-        ],
         "configFilePaths": [
-          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config"
+          "/home/peter/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
-          "netcoreapp2.2"
+          "net6.0"
         ],
         "sources": {
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "netcoreapp2.2": {
+          "net6.0": {
+            "targetAlias": "net6.0",
             "projectReferences": {}
           }
         },
@@ -37,24 +35,34 @@
         }
       },
       "frameworks": {
-        "netcoreapp2.2": {
+        "net6.0": {
+          "targetAlias": "net6.0",
           "dependencies": {
             "MegaApiClient": {
               "target": "Package",
-              "version": "[1.7.1, )"
+              "version": "[1.10.2, )"
             },
-            "Microsoft.NETCore.App": {
-              "suppressParent": "All",
+            "Spectre.Console": {
               "target": "Package",
-              "version": "[2.2.0, )",
-              "autoReferenced": true
+              "version": "[0.44.0, )"
             }
           },
           "imports": [
-            "net461"
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
           ],
           "assetTargetFallback": true,
-          "warn": true
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/6.0.202/RuntimeIdentifierGraph.json"
         }
       }
     }
