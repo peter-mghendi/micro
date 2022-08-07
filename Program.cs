@@ -1,5 +1,5 @@
-﻿using System.Text.Json;
-using CG.Web.MegaApiClient;
+﻿using System.Text;
+using System.Text.Json;
 using Micro;
 
 const string path = "./config.json";
@@ -80,13 +80,11 @@ else
 AnsiConsole.MarkupLine("[blue][[INFO]]: Starting up...[/]");
 AnsiConsole.MarkupLine("[blue][[INFO]]: Logging you in...[/]");
 
-var client = new MegaApiClient();
-var token = client.Login(configuration.Username!, configuration.Password!);
+await ApplicationState.Instance.Client.LoginAsync(configuration.Username!, configuration.Password!);
 
 AnsiConsole.MarkupLine($"[blue][[INFO]]: Login successful.[/]");
 
 AnsiConsole.Clear();
-AnsiConsole.MarkupLine("[yellow]Micro v1.0.0 \"Arc\"[/]");
 AnsiConsole.MarkupLine("[yellow]Welcome to Micro![/]");
 AnsiConsole.MarkupLine($"[yellow]Logged in as [blue]{configuration.Username!}[/].[/]");
 AnsiConsole.WriteLine();
@@ -97,10 +95,43 @@ AnsiConsole.WriteLine();
 // Prompt
 while (true)
 {
-    var command = AnsiConsole.Ask<string>("[yellow]micro > [/]");
+    var command = AnsiConsole.Ask<string>("[yellow]micro> [/]");
     if (command is "exit") break;
 
-    AppBuilder.Build().Run(command.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
+    try
+    {
+         AppBuilder.Build().Run(ParseArgsFromString(command));
+    }
+    catch (Exception ex)
+    {
+        AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
+    }
+   
 }
 
 AnsiConsole.MarkupLine("[yellow]Goodbye![/]");
+
+List<string> ParseArgsFromString(string input)
+{
+    var args = new List<string>();
+    var current = new StringBuilder();
+    var inQuote = false;
+    foreach (var c in input)
+    {
+        if (c == '"')
+        {
+            inQuote = !inQuote;
+        }
+        else if (c == ' ' && !inQuote)
+        {
+            args.Add(current.ToString());
+            current.Clear();
+        }
+        else
+        {
+            current.Append(c);
+        }
+    }
+    args.Add(current.ToString());
+    return args;
+}

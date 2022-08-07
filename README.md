@@ -23,9 +23,9 @@ micro> get Resume.pdf
 ## Supported commands
 
 - [x] exit - Exit the program
-- [ ] help - Show this help
-- [ ] pwd - Print the current directory
-- [ ] ls - List the contents of the current directory
+- [x] help - Show this help
+- [x] pwd - Print the current directory
+- [x] ls - List the contents of the current directory
 - [ ] cd - Change the current directory
 - [ ] mkdir - Create a new directory
 - [ ] rm - Remove a file or directory

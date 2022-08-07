@@ -11,7 +11,11 @@ public static class AppBuilder
 
         app.Configure(config =>
         {
+            config.SetApplicationVersion("1.0.0 \"Arc\"");
+            config.PropagateExceptions();
+            
             config.AddCommand<PrintWorkingDirectoryCommand>("pwd");
+            config.AddCommand<ListContentsCommand>("ls");
         });
 
         return app;
