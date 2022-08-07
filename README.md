@@ -2,15 +2,7 @@
 
 A simple open-source console application via which you can interact with your [Mega](https://mega.co.nz) cloud account.
 
-The below example demonstrates using micro to download the `Resume.pdf` file from your cloud account.
-
-
-
-```bash
-micro> cd Documents
-micro> ls
-micro> get Resume.pdf
-```
+![Demo](https://user-images.githubusercontent.com/26766955/183290119-30f0665a-d4da-4cd0-9d3d-c8950536b0bb.png)
 
 > **Note**
 > This project is not affiliated with or endorsed by [Mega](https://mega.co.nz).
