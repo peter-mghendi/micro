@@ -95,12 +95,12 @@ AnsiConsole.MarkupLine("[yellow]Type \"exit\" to exit.[/]");
 AnsiConsole.WriteLine();
 
 // Prompt
-while (AnsiConsole.Ask<string>("[yellow]micro > [/]") is not "exit")
+while (true)
 {
-    AnsiConsole.MarkupLine("[yellow]Processing...[/]");
-    await Task.Delay(delay: delay);
-    AnsiConsole.MarkupLine("[yellow]Done.[/]");
-    AnsiConsole.WriteLine();
+    var command = AnsiConsole.Ask<string>("[yellow]micro > [/]");
+    if (command is "exit") break;
+
+    AppBuilder.Build().Run(command.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries));
 }
 
 AnsiConsole.MarkupLine("[yellow]Goodbye![/]");
