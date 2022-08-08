@@ -103,15 +103,15 @@ while (true)
     var command = AnsiConsole.Ask<string>("[yellow]micro> [/]");
     if (command is "exit") break;
 
-    try
-    {
+    // try
+    // {
          AppBuilder.Build().Run(ParseArgsFromString(command));
-    }
-    catch (Exception ex)
-    {
-        AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
-    }
-   
+    // }
+    // catch (Exception ex)
+    // {
+    //     AnsiConsole.WriteException(ex, ExceptionFormats.ShortenEverything);
+    // }
+    //
 }
 
 AnsiConsole.MarkupLine("[yellow]Goodbye![/]");

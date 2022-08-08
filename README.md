@@ -26,7 +26,7 @@ micro> get Resume.pdf
 - [x] help - Show this help
 - [x] pwd - Print the current directory
 - [x] ls - List the contents of the current directory
-- [ ] cd - Change the current directory
+- [x] cd - Change the current directory
 - [ ] mkdir - Create a new directory
 - [ ] rm - Remove a file or directory
 - [ ] mv - Move a file or directory
@@ -39,3 +39,18 @@ micro> get Resume.pdf
 
 - [ ] Command history
 - [ ] Command completion
+- [ ] Command aliases
+- [ ] '.' and '..' navigation
+- [ ] Character escaping
+- [ ] File globbing
+- [ ] File search
+
+## Caveats
+
+In order to keep the command parser simple, some caveats are in place:
+
+- Lines with whitespace MUST be quoted with double quotes.
+- Quoted lines MUST always use double quotes.
+- Single quotes and backticks inside double quotes are allowed.
+- Double quotes inside double quotes are not supported (yet).
+- The path separator is `/`.

@@ -19,8 +19,9 @@ public class ListContentsCommand : AsyncCommand<ListContentsCommand.Settings>
         var parent = settings.Path is null 
             ? nodes.Single(n => n.Id == ApplicationState.Instance.WorkingDirectory)
             : GetNodeFromPath(settings.Path, nodes);
+        var name = parent is { Type: NodeType.Root } ? nameof(NodeType.Root) : parent.Name;
         var tree = BuildTreeRecursive(
-            tree: new Tree($"[blue]{Emoji.Known.FileFolder} Root[/]"),
+            tree: new Tree($"[blue]{Emoji.Known.FileFolder} {name}[/]"),
             recurse: settings.Recursive ?? false,
             nodes: nodes,
             parent: parent
@@ -33,7 +34,7 @@ public class ListContentsCommand : AsyncCommand<ListContentsCommand.Settings>
     {
         var root = nodes.Single(n => n.Type == NodeType.Root);
         var pathSegments =
-            path.Split('/', '\\', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+            path.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
         if (pathSegments.Length <= 0) return root;
 

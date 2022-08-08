@@ -19,9 +19,9 @@ public class PrintWorkingDirectoryCommand : AsyncCommand<PrintWorkingDirectoryCo
 
     private static string UnravelPathToRoot(INode node, List<INode> nodes, string path = "/")
     {
-        if (node is { Type: NodeType.Root }) return path;
+        if (node is { Type: NodeType.Root }) return $"/{path}";
 
         var parent = nodes.Single(n => n.Id == node.ParentId);
-        return UnravelPathToRoot(parent, nodes, Path.Combine(node.Name, path));
+        return UnravelPathToRoot(parent, nodes, Path.Combine(node.Name, path.Trim('/')));
     }
 }
