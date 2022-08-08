@@ -8,7 +8,7 @@ public class ListContentsCommand : AsyncCommand<ListContentsCommand.Settings>
 {
     public class Settings : CommandSettings
     {
-        [CommandArgument(0, "[path]")] public string Path { get; set; } = "/";
+        [CommandArgument(0, "[path]")] public string? Path { get; set; }
 
         [CommandOption("-r|--recursive")] public bool? Recursive { get; set; }
     }
@@ -16,7 +16,9 @@ public class ListContentsCommand : AsyncCommand<ListContentsCommand.Settings>
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
         var nodes = (await ApplicationState.Instance.Client.GetNodesAsync()).ToList();
-        var parent = GetNodeFromPath(settings.Path, nodes);
+        var parent = settings.Path is null 
+            ? nodes.Single(n => n.Id == ApplicationState.Instance.WorkingDirectory)
+            : GetNodeFromPath(settings.Path, nodes);
         var tree = BuildTreeRecursive(
             tree: new Tree($"[blue]{Emoji.Known.FileFolder} Root[/]"),
             recurse: settings.Recursive ?? false,
@@ -66,14 +68,14 @@ public class ListContentsCommand : AsyncCommand<ListContentsCommand.Settings>
             info = child.Type switch
             {
                 NodeType.Directory => $"[blue]{info}[/]",
-                NodeType.File => $"[white]{info}[/]"
+                NodeType.File => info
             };
 
 
             if (recurse && child is {Type: NodeType.Directory})
             {
                 var nestedTree = BuildTreeRecursive(
-                    tree: new Tree(info.PadLeft(info.Length + level, ' ')),
+                    tree: new Tree(info),
                     recurse: recurse,
                     nodes: nodes,
                     parent: child,
@@ -83,7 +85,7 @@ public class ListContentsCommand : AsyncCommand<ListContentsCommand.Settings>
             }
             else
             {
-                tree.AddNode(info.PadLeft(info.Length + level, ' '));
+                tree.AddNode(info);
             }
         }
 

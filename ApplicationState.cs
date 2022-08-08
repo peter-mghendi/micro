@@ -12,5 +12,5 @@ public class ApplicationState
     
     public MegaApiClient Client { get; set; } = new();
 
-    public string WorkingDirectory { get; set; } = "/";
+    public string WorkingDirectory { get; set; } = string.Empty;
 }

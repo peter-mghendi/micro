@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using System.Text.Json;
+using CG.Web.MegaApiClient;
 using Micro;
 
 const string path = "./config.json";
@@ -81,6 +82,10 @@ AnsiConsole.MarkupLine("[blue][[INFO]]: Starting up...[/]");
 AnsiConsole.MarkupLine("[blue][[INFO]]: Logging you in...[/]");
 
 await ApplicationState.Instance.Client.LoginAsync(configuration.Username!, configuration.Password!);
+
+// Set working directory to the th root of the cloud storage
+var nodes = await ApplicationState.Instance.Client.GetNodesAsync();
+ApplicationState.Instance.WorkingDirectory = nodes.Single(x => x.Type == NodeType.Root).Id;
 
 AnsiConsole.MarkupLine($"[blue][[INFO]]: Login successful.[/]");
 
