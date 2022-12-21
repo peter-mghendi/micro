@@ -5,7 +5,7 @@ A simple open-source console application via which you can interact with your [M
 ![Demo](https://user-images.githubusercontent.com/26766955/183290119-30f0665a-d4da-4cd0-9d3d-c8950536b0bb.png)
 
 > **Note**
-> This project is not affiliated with or endorsed by [Mega](https://mega.co.nz).
+> This project is neither affiliated with or endorsed by [Mega](https://mega.co.nz).
 
 ## How To Use
 
