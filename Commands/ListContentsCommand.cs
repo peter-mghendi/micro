@@ -1,6 +1,8 @@
 using System.Text;
 using CG.Web.MegaApiClient;
+using Micro.Commands.Utilities;
 using Spectre.Console.Cli;
+using static CG.Web.MegaApiClient.NodeType;
 
 namespace Micro.Commands;
 
@@ -15,11 +17,11 @@ public class ListContentsCommand : AsyncCommand<ListContentsCommand.Settings>
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var nodes = (await ApplicationState.Instance.Client.GetNodesAsync()).ToList();
-        var parent = settings.Path is null 
-            ? nodes.Single(n => n.Id == ApplicationState.Instance.WorkingDirectoryNode)
-            : GetNodeFromPath(settings.Path, nodes);
-        var name = parent is { Type: NodeType.Root } ? nameof(NodeType.Root) : parent.Name;
+        var state = ApplicationState.Instance;
+        var nodes = (await state.Client.GetNodesAsync()).ToList();
+        var current = nodes.Single(n => n.Id == state.WorkingDirectoryNode);
+        var parent = PathUtilities.FindNodeByPath(settings.Path ?? ".", current, nodes);
+        var name = parent is { Type: Root } ? "/" : parent.Name;
         var tree = BuildTreeRecursive(
             tree: new Tree($"[blue]{Emoji.Known.FileFolder} {name}[/]"),
             recurse: settings.Recursive ?? false,
@@ -28,23 +30,6 @@ public class ListContentsCommand : AsyncCommand<ListContentsCommand.Settings>
         );
         AnsiConsole.Write(tree);
         return 0;
-    }
-
-    private INode GetNodeFromPath(string path, List<INode> nodes)
-    {
-        var root = nodes.Single(n => n.Type == NodeType.Root);
-        var pathSegments =
-            path.Split('/', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-        if (pathSegments.Length <= 0) return root;
-
-        foreach (var pathSegment in pathSegments)
-        {
-            root = nodes.Single(n => n.Name == pathSegment && n.Type == NodeType.Directory);
-            nodes = nodes.FindAll(n => n.ParentId == root.Id);
-        }
-
-        return root;
     }
 
     private static Tree BuildTreeRecursive(Tree tree, bool recurse, List<INode> nodes, INode parent, int level = 0)
