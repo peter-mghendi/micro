@@ -15,7 +15,7 @@ public class ChangeDirectoryCommand : AsyncCommand<ChangeDirectoryCommand.Settin
     {
         var state = ApplicationState.Instance;
         var nodes = (await state.Client.GetNodesAsync()).ToList();
-        
+
         if (settings.Path is null)
         {
             var root = nodes.Single(n => n is { Type: NodeType.Root }).Id;
@@ -28,9 +28,22 @@ public class ChangeDirectoryCommand : AsyncCommand<ChangeDirectoryCommand.Settin
         var current = nodes.Single(n => n.Id == state.WorkingDirectoryNode);
         foreach (var part in path)
         {
-            // TODO: implement .. and . "directories"
-            var children = nodes.Where(n => n.ParentId == current.Id).ToList();
-            var next = children.SingleOrDefault(n => n.Name == part);
+            if (part == ".") continue;
+
+            INode? next;
+            var back = part == "..";
+            
+            if (back)
+            {
+                next = nodes.SingleOrDefault(n => n.Id == current.ParentId) ?? current;
+            }
+            else
+            {
+                next = nodes.Where(n => n.ParentId == current.Id)
+                    .ToList()
+                    .SingleOrDefault(n => n.Name == part);   
+            }
+            
             if (next is null)
             {
                 AnsiConsole.WriteException(new DirectoryNotFoundException($"Directory {part} not found."));

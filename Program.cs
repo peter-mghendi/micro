@@ -97,13 +97,13 @@ AnsiConsole.MarkupLine("[yellow]Type \"help\" for a list of commands.[/]");
 AnsiConsole.MarkupLine("[yellow]Type \"exit\" to exit.[/]");
 AnsiConsole.WriteLine();
 
-// Prompt
+// Command prompt
 while (true)
 {
-    var command = AnsiConsole.Ask<string>($"[yellow]micro[[{ApplicationState.Instance.WorkingDirectoryPath}]]>[/]");
+    var command = AnsiConsole.Ask<string>($"[yellow]micro:{ApplicationState.Instance.WorkingDirectoryPath}>[/]");
     if (command is "exit") break;
     
-    // Hook into Spectre help command
+    // Hook into Spectre help/version commands
     if (command is "help" or "version") command = $"--{command}"; 
 
     // try
