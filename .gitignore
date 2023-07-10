@@ -453,5 +453,9 @@ $RECYCLE.BIN/
 !.vscode/launch.json
 !.vscode/extensions.json
 
+## bin and obj
+/bin
+/obj
+
 ## config.json
 config.json
