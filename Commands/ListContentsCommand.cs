@@ -17,7 +17,7 @@ public class ListContentsCommand : AsyncCommand<ListContentsCommand.Settings>
     {
         var nodes = (await ApplicationState.Instance.Client.GetNodesAsync()).ToList();
         var parent = settings.Path is null 
-            ? nodes.Single(n => n.Id == ApplicationState.Instance.WorkingDirectory)
+            ? nodes.Single(n => n.Id == ApplicationState.Instance.WorkingDirectoryNode)
             : GetNodeFromPath(settings.Path, nodes);
         var name = parent is { Type: NodeType.Root } ? nameof(NodeType.Root) : parent.Name;
         var tree = BuildTreeRecursive(

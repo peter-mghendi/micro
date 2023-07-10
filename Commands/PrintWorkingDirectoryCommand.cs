@@ -1,4 +1,6 @@
+using System.ComponentModel;
 using CG.Web.MegaApiClient;
+using Micro.Commands.Utilities;
 using Spectre.Console.Cli;
 
 namespace Micro.Commands;
@@ -7,21 +9,25 @@ public class PrintWorkingDirectoryCommand : AsyncCommand<PrintWorkingDirectoryCo
 {
     public class Settings : CommandSettings
     {
+        [CommandOption("-f|--force")]
+        [Description("When set, micro will bypass the cache and re-compute the current path")]
+        public bool? Force { get; set; }
     }
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var nodes = (await ApplicationState.Instance.Client.GetNodesAsync()).ToList();
-        var currentNode = nodes.Single(n=> n.Id == ApplicationState.Instance.WorkingDirectory);
-        AnsiConsole.MarkupLine(UnravelPathToRoot(currentNode, nodes));
+        var state = ApplicationState.Instance;
+        var path = state.WorkingDirectoryPath;
+        
+        if (settings.Force ?? false)
+        {
+            var nodes = (await state.Client.GetNodesAsync()).ToList();
+            var currentNode = nodes.Single(n=> n.Id == state.WorkingDirectoryNode);
+            path = PathUtilities.UnravelPathToRoot(currentNode, nodes);
+            state.WorkingDirectoryPath = path;
+        }
+
+        AnsiConsole.MarkupLine(path);
         return 0;
-    }
-
-    private static string UnravelPathToRoot(INode node, List<INode> nodes, string path = "/")
-    {
-        if (node is { Type: NodeType.Root }) return $"/{path}";
-
-        var parent = nodes.Single(n => n.Id == node.ParentId);
-        return UnravelPathToRoot(parent, nodes, Path.Combine(node.Name, path.Trim('/')));
     }
 }

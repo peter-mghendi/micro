@@ -1,4 +1,5 @@
 using CG.Web.MegaApiClient;
+using Micro.Commands.Utilities;
 using Spectre.Console.Cli;
 
 namespace Micro.Commands;
@@ -12,17 +13,22 @@ public class ChangeDirectoryCommand : AsyncCommand<ChangeDirectoryCommand.Settin
 
     public override async Task<int> ExecuteAsync(CommandContext context, Settings settings)
     {
-        var nodes = (await ApplicationState.Instance.Client.GetNodesAsync()).ToList();
+        var state = ApplicationState.Instance;
+        var nodes = (await state.Client.GetNodesAsync()).ToList();
+        
         if (settings.Path is null)
         {
-            ApplicationState.Instance.WorkingDirectory = nodes.Single(n => n is { Type: NodeType.Root }).Id;
+            var root = nodes.Single(n => n is { Type: NodeType.Root }).Id;
+            state.WorkingDirectoryNode = root;
+            state.WorkingDirectoryPath = PathUtilities.UnravelPathToRoot(root, nodes);
             return 0;
         }
         
         var path = settings.Path.Split('/');
-        var current = nodes.Single(n => n.Id == ApplicationState.Instance.WorkingDirectory);
+        var current = nodes.Single(n => n.Id == state.WorkingDirectoryNode);
         foreach (var part in path)
         {
+            // TODO: implement .. and . "directories"
             var children = nodes.Where(n => n.ParentId == current.Id).ToList();
             var next = children.SingleOrDefault(n => n.Name == part);
             if (next is null)
@@ -32,7 +38,9 @@ public class ChangeDirectoryCommand : AsyncCommand<ChangeDirectoryCommand.Settin
             }
             current = next;
         }
-        ApplicationState.Instance.WorkingDirectory = current.Id;
+        
+        state.WorkingDirectoryNode = current.Id;
+        state.WorkingDirectoryPath = PathUtilities.UnravelPathToRoot(current.Id, nodes);
         return 0;
     }
 }

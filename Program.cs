@@ -83,9 +83,9 @@ AnsiConsole.MarkupLine("[blue][[INFO]]: Logging you in...[/]");
 
 await ApplicationState.Instance.Client.LoginAsync(configuration.Username!, configuration.Password!);
 
-// Set working directory to the th root of the cloud storage
+// Set working directory to the the root of the cloud storage
 var nodes = await ApplicationState.Instance.Client.GetNodesAsync();
-ApplicationState.Instance.WorkingDirectory = nodes.Single(x => x.Type == NodeType.Root).Id;
+ApplicationState.Instance.WorkingDirectoryNode = nodes.Single(x => x.Type == NodeType.Root).Id;
 
 AnsiConsole.MarkupLine($"[blue][[INFO]]: Login successful.[/]");
 
@@ -100,8 +100,11 @@ AnsiConsole.WriteLine();
 // Prompt
 while (true)
 {
-    var command = AnsiConsole.Ask<string>("[yellow]micro> [/]");
+    var command = AnsiConsole.Ask<string>($"[yellow]micro[[{ApplicationState.Instance.WorkingDirectoryPath}]]>[/]");
     if (command is "exit") break;
+    
+    // Hook into Spectre help command
+    if (command is "help" or "version") command = $"--{command}"; 
 
     // try
     // {
@@ -123,18 +126,18 @@ List<string> ParseArgsFromString(string input)
     var inQuote = false;
     foreach (var c in input)
     {
-        if (c == '"')
+        switch (c)
         {
-            inQuote = !inQuote;
-        }
-        else if (c == ' ' && !inQuote)
-        {
-            args.Add(current.ToString());
-            current.Clear();
-        }
-        else
-        {
-            current.Append(c);
+            case '"':
+                inQuote = !inQuote;
+                break;
+            case ' ' when !inQuote:
+                args.Add(current.ToString());
+                current.Clear();
+                break;
+            default:
+                current.Append(c);
+                break;
         }
     }
     args.Add(current.ToString());
