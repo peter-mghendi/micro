@@ -14,10 +14,11 @@ public static class AppBuilder
             config.SetApplicationVersion("1.0.0 \"Arc\"");
             // config.PropagateExceptions();
             
-            // TODO: get command
+            // TODO: mkdir, upload, delete, restore, chat
             config.AddCommand<PrintWorkingDirectoryCommand>("pwd");
             config.AddCommand<ListContentsCommand>("ls");
             config.AddCommand<ChangeDirectoryCommand>("cd");
+            config.AddCommand<GetCommand>("get");
         });
 
         return app;
