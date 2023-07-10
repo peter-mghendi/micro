@@ -18,6 +18,12 @@ public static class PathUtilities
         return UnravelPathToRoot(parent, nodes, Path.Combine(node.Name, path.Trim('/')));
     }
 
+    public static INode FindNodeByPath(string path, string start, List<INode> nodes)
+    {
+        var current = nodes.Single(n=> n.Id == start);
+        return FindNodeByPath(path, current, nodes);
+    }
+
     public static INode FindNodeByPath(string path, INode start, List<INode> nodes)
     {
         if (path.StartsWith("/"))

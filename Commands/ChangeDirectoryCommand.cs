@@ -15,20 +15,15 @@ public class ChangeDirectoryCommand : AsyncCommand<ChangeDirectoryCommand.Settin
     {
         var state = ApplicationState.Instance;
         var nodes = (await state.Client.GetNodesAsync()).ToList();
+        var node = nodes.Single(n => n is { Type: NodeType.Root });
 
-        if (settings.Path is null or "")
+        if (settings.Path is not null or "")
         {
-            var root = nodes.Single(n => n is { Type: NodeType.Root }).Id;
-            state.WorkingDirectoryNode = root;
-            state.WorkingDirectoryPath = PathUtilities.UnravelPathToRoot(root, nodes);
-            return 0;
+            node = PathUtilities.FindNodeByPath(settings.Path, state.WorkingDirectoryNode, nodes);   
         }
 
-        var current = nodes.Single(n => n.Id == state.WorkingDirectoryNode);
-        var node = PathUtilities.FindNodeByPath(settings.Path, current, nodes);
-
         state.WorkingDirectoryNode = node.Id;
-        state.WorkingDirectoryPath = PathUtilities.UnravelPathToRoot(node.Id, nodes);
+        state.WorkingDirectoryPath = PathUtilities.UnravelPathToRoot(node, nodes);
         return 0;
     }
 }

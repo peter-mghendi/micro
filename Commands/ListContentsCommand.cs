@@ -19,8 +19,8 @@ public class ListContentsCommand : AsyncCommand<ListContentsCommand.Settings>
     {
         var state = ApplicationState.Instance;
         var nodes = (await state.Client.GetNodesAsync()).ToList();
-        var current = nodes.Single(n => n.Id == state.WorkingDirectoryNode);
-        var parent = PathUtilities.FindNodeByPath(settings.Path ?? ".", current, nodes);
+        var parent = PathUtilities.FindNodeByPath(settings.Path ?? ".", state.WorkingDirectoryNode, nodes);
+        
         var name = parent is { Type: Root } ? "/" : parent.Name;
         var tree = BuildTreeRecursive(
             tree: new Tree($"[blue]{Emoji.Known.FileFolder} {name}[/]"),

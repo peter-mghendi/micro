@@ -17,9 +17,7 @@ public class GetCommand : AsyncCommand<GetCommand.Settings>
     {
         var state = ApplicationState.Instance;
         var nodes = (await state.Client.GetNodesAsync()).ToList();
-
-        var current = nodes.Single(n => n.Id == state.WorkingDirectoryNode);
-        var node = PathUtilities.FindNodeByPath(settings.Path, current, nodes);
+        var node = PathUtilities.FindNodeByPath(settings.Path, state.WorkingDirectoryNode, nodes);
 
         if (node is not { Type: NodeType.File })
         {
