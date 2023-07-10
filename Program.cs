@@ -22,14 +22,13 @@ await AnsiConsole.Status()
         Thread.Sleep(timeout: delay);
         AnsiConsole.MarkupLine("[blue][[INFO]]: Initialized.[/]");
         ctx.Status("Checking for config file...");
-
-
+        
         Thread.Sleep(timeout: delay);
         var exists = File.Exists("./config.json");
         if (!exists)
         {
             AnsiConsole.MarkupLine("[yellow][[WARN]]: No config file found.[/]");
-            ctx.Status("Cresting config...");
+            ctx.Status("Creating config...");
 
             Thread.Sleep(timeout: delay);
             File.Create("./config.json").Close();
