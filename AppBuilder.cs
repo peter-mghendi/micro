@@ -22,6 +22,7 @@ public static class AppBuilder
             config.AddCommand<MakeDirectoryCommand>("mkdir");
             config.AddCommand<RemoveCommand>("rm");
             config.AddCommand<StatusCommand>("stat");
+            config.AddCommand<MoveCommand>("mv");
         });
 
         return app;
