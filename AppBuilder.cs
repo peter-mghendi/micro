@@ -14,7 +14,7 @@ public static class AppBuilder
             config.SetApplicationVersion("1.0.0 \"Arc\"");
             // config.PropagateExceptions();
             
-            // TODO: upload, cp, mv, rename, chat, whoami, editor
+            // TODO: upload, cp, mv, rename, chat, whoami, editor, stat (name, type, created at, last modified at, size, node id)
             config.AddCommand<PrintWorkingDirectoryCommand>("pwd");
             config.AddCommand<ListContentsCommand>("ls");
             config.AddCommand<ChangeDirectoryCommand>("cd");

@@ -8,6 +8,7 @@ var delay = TimeSpan.FromMilliseconds(1500);
 
 Configuration configuration = new();
 
+AnsiConsole.Clear();
 AnsiConsole.MarkupLine("[bold yellow]Hello there![/]");
 await Task.Delay(delay: delay);
 
@@ -51,7 +52,7 @@ await AnsiConsole.Status()
         AnsiConsole.MarkupLine("[blue][[INFO]]: Configuration loaded successfully.[/]");
     });
 
-AnsiConsole.WriteLine();
+AnsiConsole.Clear();
 if (!configuration.Configured)
 {
     AnsiConsole.MarkupLine("[yellow]This is your first time running this program![/]");
