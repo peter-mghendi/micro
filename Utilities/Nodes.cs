@@ -25,6 +25,7 @@ public static class Nodes
         return FindNodeByPath(path, current, nodes);
     }
 
+    // TODO: Find a way to deduplicate nodes with the same name
     public static INode FindNodeByPath(string path, INode start, List<INode> nodes)
     {
         if (path.StartsWith("/"))
