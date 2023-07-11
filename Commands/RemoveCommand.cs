@@ -18,7 +18,7 @@ public class RemoveCommand : AsyncCommand<RemoveCommand.Settings>
     {
         var state = ApplicationState.Instance;
         var nodes = (await state.Client.GetNodesAsync()).ToList();
-        var node = PathUtilities.FindNodeByPath(settings.Path, state.WorkingDirectoryNode, nodes);
+        var node = Nodes.FindNodeByPath(settings.Path, state.WorkingDirectoryNode, nodes);
 
         if (node is not { Type: NodeType.File or NodeType.Directory })
         {

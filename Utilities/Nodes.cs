@@ -1,8 +1,9 @@
+using System.Collections.Specialized;
 using CG.Web.MegaApiClient;
 
 namespace Micro.Commands.Utilities;
 
-public static class PathUtilities
+public static class Nodes
 {
     public static string UnravelPathToRoot(string node, List<INode> nodes)
     {
@@ -55,5 +56,17 @@ public static class PathUtilities
         }
 
         return current;
+    }
+
+    public static async Task<NodeStatus> GetNodeStatus(INode node, List<INode> nodes)
+    {
+        if (node is not { Type: NodeType.File or NodeType.Directory })
+        {
+            throw new InvalidOperationException("Status operation is only valid for files and directories.");
+        }
+        
+        var name = node is { Type: NodeType.Root } ? "/" : node.Name;
+        var size = node is { Type: NodeType.File } ? node.Size : await node.GetFolderSizeAsync(nodes);
+        return new NodeStatus(name, node.Id, node.Type, size, node.CreationDate, node.ModificationDate);
     }
 }

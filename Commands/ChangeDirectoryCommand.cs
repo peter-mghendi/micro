@@ -19,11 +19,11 @@ public class ChangeDirectoryCommand : AsyncCommand<ChangeDirectoryCommand.Settin
 
         if (settings.Path is not null)
         {
-            node = PathUtilities.FindNodeByPath(settings.Path, state.WorkingDirectoryNode, nodes);   
+            node = Nodes.FindNodeByPath(settings.Path, state.WorkingDirectoryNode, nodes);   
         }
 
         state.WorkingDirectoryNode = node.Id;
-        state.WorkingDirectoryPath = PathUtilities.UnravelPathToRoot(node, nodes);
+        state.WorkingDirectoryPath = Nodes.UnravelPathToRoot(node, nodes);
         return 0;
     }
 }

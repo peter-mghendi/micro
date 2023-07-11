@@ -23,7 +23,7 @@ public class PrintWorkingDirectoryCommand : AsyncCommand<PrintWorkingDirectoryCo
         {
             var nodes = (await state.Client.GetNodesAsync()).ToList();
             var currentNode = nodes.Single(n=> n.Id == state.WorkingDirectoryNode);
-            path = PathUtilities.UnravelPathToRoot(currentNode, nodes);
+            path = Nodes.UnravelPathToRoot(currentNode, nodes);
             state.WorkingDirectoryPath = path;
         }
 
