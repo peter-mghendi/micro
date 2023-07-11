@@ -17,7 +17,7 @@ public class ChangeDirectoryCommand : AsyncCommand<ChangeDirectoryCommand.Settin
         var nodes = (await state.Client.GetNodesAsync()).ToList();
         var node = nodes.Single(n => n is { Type: NodeType.Root });
 
-        if (settings.Path is not null or "")
+        if (settings.Path is not null)
         {
             node = PathUtilities.FindNodeByPath(settings.Path, state.WorkingDirectoryNode, nodes);   
         }
