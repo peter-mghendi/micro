@@ -25,6 +25,7 @@ public static class AppBuilder
             config.AddCommand<StatusCommand>("stat");
             config.AddCommand<MoveCommand>("mv");
             config.AddCommand<UsernameCommand>("whoami");
+            config.AddCommand<ClearCommand>("clear");
         });
 
         return app;
