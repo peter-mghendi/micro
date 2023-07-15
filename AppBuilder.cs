@@ -26,6 +26,7 @@ public static class AppBuilder
             config.AddCommand<MoveCommand>("mv");
             config.AddCommand<UsernameCommand>("whoami");
             config.AddCommand<ClearCommand>("clear");
+            config.AddCommand<TouchCommand>("touch");
         });
 
         return app;
