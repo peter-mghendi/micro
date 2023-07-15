@@ -40,9 +40,8 @@ public static class Nodes
             if (part == ".") continue;
 
             INode? next;
-            var back = part == "..";
 
-            if (back)
+            if (part == "..")
             {
                 next = nodes.SingleOrDefault(n => n.Id == current.ParentId) ?? current;
             }
@@ -82,17 +81,17 @@ public static class Nodes
                 return null;
             case 1:
                 return nodes[0];
+            default:
+                var distinct = nodes.DistinctBy(node => node.Name).ToList();
+                if (distinct.Skip(1).Any())
+                    throw new InvalidOperationException("Cannot deduplicate multiple items at once");
+
+                var prompt = new SelectionPrompt<INode>()
+                    .Title($"Multiple items with name {distinct.Single().Name}. Select the correct item:")
+                    .AddChoices(nodes)
+                    .UseConverter(node => $"{node.Name} ({node.Type}) - Last Modified: {node.ModificationDate ?? node.CreationDate}");
+
+                return AnsiConsole.Prompt(prompt);
         }
-
-        var distinct = nodes.DistinctBy(node => node.Name).ToList();
-        if (distinct.Skip(1).Any())
-            throw new InvalidOperationException("Cannot deduplicate multiple items at once");
-
-        var prompt = new SelectionPrompt<INode>()
-            .Title($"Multiple items with name {distinct.Single().Name}. Select the correct item:")
-            .AddChoices(nodes)
-            .UseConverter(node => $"{node.Name} ({node.Type}) - Last Modified: {node.ModificationDate ?? node.CreationDate}");
-        
-        return AnsiConsole.Prompt(prompt);
     }
 }

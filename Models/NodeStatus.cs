@@ -13,7 +13,7 @@ public record NodeStatus(string Name, string Id, NodeType Type, long Size, DateT
         Type: {Type}
         Size: {Size} bytes
         Created At: {CreatedAt?.ToString()}
-        Last Modified At: {LastModifiedAt?.ToString()}
+        Last Modified At: {LastModifiedAt ?? CreatedAt}
         """;
     }
 };
