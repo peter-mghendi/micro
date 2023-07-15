@@ -34,7 +34,7 @@ public class ListContentsCommand : AsyncCommand<ListContentsCommand.Settings>
 
     private static Tree BuildTreeRecursive(Tree tree, bool recurse, List<INode> nodes, INode parent, int level = 0)
     {
-        var children = nodes.Where(x => x.ParentId == parent.Id);
+        var children = Nodes.GetChildNodes(parent, nodes);
         foreach (var child in children)
         {
             var lineBuilder = new StringBuilder();
