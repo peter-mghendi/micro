@@ -5,18 +5,34 @@ namespace Micro.Commands.Utilities;
 
 public static class Nodes
 {
+    private const string empty = "";
+    
     public static string UnravelPathToRoot(string node, List<INode> nodes)
     {
         var current = nodes.Single(n => n.Id == node);
         return UnravelPathToRoot(current, nodes);
     }
 
-    public static string UnravelPathToRoot(INode node, List<INode> nodes, string path = "")
+    public static string UnravelPathToRoot(INode node, List<INode> nodes, string path = empty)
     {
-        if (node is { Type: NodeType.Root }) return $"/{path}";
+        var root = nodes.Single(n => n is { Type: NodeType.Root });
+        return UnravelPathToNode(root, node, nodes, path);
+    }
 
-        var parent = nodes.Single(n => n.Id == node.ParentId);
-        return UnravelPathToRoot(parent, nodes, Path.Combine(node.Name, path.Trim('/')));
+    public static string UnravelPathToNode(INode target, INode child, List<INode> nodes, string path = empty)
+    {
+        if (child.Id == target.Id)
+        {
+            return child is { Type: NodeType.Root } ? $"/{path}" : path;
+        }
+
+        if (child.ParentId is null or empty)
+        {
+            throw new InvalidOperationException($"Target node '{target.Name}' not found in hierarchy.");
+        }
+
+        var parent = nodes.Single(n => n.Id == child.ParentId);
+        return UnravelPathToNode(target, parent, nodes, Path.Combine(child.Name, path.Trim('/')));
     }
 
     public static INode FindNodeByPath(string path, string start, List<INode> nodes)
