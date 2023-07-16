@@ -62,8 +62,9 @@ public class GetCommand : AsyncCommand<GetCommand.Settings>
                 case NodeType.File:
                 {
                     var name = Nodes.UnravelPathToNode(root, node, nodes);
-                    AnsiConsole.MarkupLine($"Downloading [blue]{name}[/]...");
                     var entry = archive.CreateEntry(name);
+                    
+                    AnsiConsole.MarkupLine($"Downloading [blue]{name}[/]...");
                     
                     await using var download = await client.DownloadAsync(node, cancellationToken: cancellationToken);
                     await using var stream = entry.Open();
