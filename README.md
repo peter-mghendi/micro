@@ -48,6 +48,7 @@ The following commands are available in Micro:
 - `cd`: Change the current working directory.
 - `clear`: Clear the screen.
 - `exit`: Quit micro and optionally delete authentication details.
+- `history`: Show command history.
 - `get`: Download a file from MEGA to the local machine.
 - `ls`: List the contents of the current directory.
 - `mkdir`: Create a new directory on MEGA.
@@ -83,6 +84,11 @@ The following commands are available in Micro:
 - Download a file from MEGA to the local machine:
   ```shell
   μ:/my_folder> get file.txt
+  ```
+
+- Show command history:
+  ```shell
+  μ:/my_folder> history
   ```
 
 - Create a new directory on MEGA:
@@ -147,7 +153,7 @@ To display help information or check the version of Micro, you can use the follo
 ## Features
 
 - [x] '.' and '..' navigation
-- [ ] Command history
+- [x] Command history
 - [ ] Command completion
 - [ ] Command aliases
 - [x] Character escaping

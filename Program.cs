@@ -2,6 +2,7 @@
 using CG.Web.MegaApiClient;
 using Micro;
 using Micro.Models;
+using Micro.Services;
 using static System.Environment;
 using static System.IO.Directory;
 using static System.IO.Path;
@@ -56,7 +57,10 @@ while (true)
     }
 
     if (arguments is ["help" or "version"]) arguments = [$"--{arguments[0]}"];
+    
     AppBuilder.Build().Run(arguments);
+    
+    if (arguments is not ["history", ..]) await History.WriteAsync(command);
 }
 
 async Task<Configuration?> ReadConfiguration()

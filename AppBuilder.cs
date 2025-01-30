@@ -18,6 +18,7 @@ public static class AppBuilder
             config.AddCommand<ChangeDirectoryCommand>("cd");
             config.AddCommand<ClearCommand>("clear");
             config.AddCommand<GetCommand>("get");
+            config.AddCommand<HistoryCommand>("history");
             config.AddCommand<ListContentsCommand>("ls");
             config.AddCommand<MakeDirectoryCommand>("mkdir");
             config.AddCommand<MoveCommand>("mv");
