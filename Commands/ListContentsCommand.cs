@@ -20,7 +20,7 @@ public class ListContentsCommand : AsyncCommand<ListContentsCommand.Settings>
         var state = ApplicationState.Instance;
         var nodes = (await state.Client.GetNodesAsync()).ToList();
         var parent = Nodes.FindNodeByPath(settings.Path ?? ".", state.WorkingDirectoryNode, nodes);
-        
+
         var name = parent is { Type: Root } ? "/" : parent.Name;
         var tree = BuildTreeRecursive(
             tree: new Tree($"[blue]{Emoji.Known.FileFolder} {name}[/]"),
@@ -28,7 +28,8 @@ public class ListContentsCommand : AsyncCommand<ListContentsCommand.Settings>
             nodes: nodes,
             parent: parent
         );
-        AnsiConsole.Write(tree);
+
+        Write(tree);
         return 0;
     }
 
@@ -50,15 +51,13 @@ public class ListContentsCommand : AsyncCommand<ListContentsCommand.Settings>
                     NodeType.File => $" ({child.Size} bytes)"
                 }).ToString();
 
-            // Wrap the line in the appropriate color - blue for directories, white for files.
             info = child.Type switch
             {
                 NodeType.Directory => $"[blue]{info}[/]",
                 NodeType.File => info
             };
 
-
-            if (recurse && child is {Type: NodeType.Directory})
+            if (recurse && child is { Type: NodeType.Directory })
             {
                 var nestedTree = BuildTreeRecursive(
                     tree: new Tree(info),

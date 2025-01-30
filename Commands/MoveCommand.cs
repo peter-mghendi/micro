@@ -21,7 +21,7 @@ public class MoveCommand : AsyncCommand<MoveCommand.Settings>
 
         if (node is not { Type: NodeType.File or NodeType.Directory })
         {
-            AnsiConsole.WriteException(new InvalidOperationException("Only files can be downloaded."));
+            WriteException(new InvalidOperationException("Only files can be downloaded."));
             return 1;
         }
 

@@ -1,9 +1,3 @@
-namespace Micro;
+namespace Micro.Models;
 
-public record class Configuration(
-    bool Configured = false,
-    string? Name = null,
-    string? Username = null,
-    string? Password = null,
-    string? Token = null
-);
+public record Configuration(string? Username, string? Password, string? Name = null);

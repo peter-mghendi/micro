@@ -17,7 +17,7 @@ public class StatusCommand : AsyncCommand<StatusCommand.Settings>
         var state = ApplicationState.Instance;
         var nodes = (await state.Client.GetNodesAsync()).ToList();
         var node = Nodes.FindNodeByPath(settings.Path, state.WorkingDirectoryNode, nodes);
-        AnsiConsole.WriteLine((await Nodes.GetNodeStatus(node, nodes)).ToString());
+        WriteLine((await Nodes.GetNodeStatus(node, nodes)).ToString());
 
         return 0;
     }

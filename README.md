@@ -13,7 +13,7 @@ Micro is a simple open-source shell which allows you to use bash-esque commands 
 ## Installation
 
 Download the latest micro release from the [releases page](https://github.com/sixpeteunder/micro/releases) or build
-source by running `dotnet build` (Requires at least .NET 7).
+source by running `dotnet build` (Requires at least .NET 9).
 
 ## Usage
 
@@ -33,12 +33,6 @@ micro stores your authentication details locally and reuses them between session
 ```shell
 μ:/> exit --logout 
 ```
-
-OR locate and delete the `./config.json` file on your computer. 
-
-<center>
-<img src="Assets/init.png" alt="Screenshot of micro starting up">
-</center>
 
 ### Available Commands
 
@@ -156,20 +150,26 @@ To display help information or check the version of Micro, you can use the follo
 - [ ] Command history
 - [ ] Command completion
 - [ ] Command aliases
-- [ ] Character escaping
+- [x] Character escaping
 - [ ] File globbing
 - [ ] File search
 - [ ] 2FA
 
-## Caveats
+## Command Parsing
 
-In order to keep the command parser simple, some caveats are in place:
+> The command line interface now fully adheres to the POSIX standard.
+Commands typed into the micro shell will be parsed in the same way as those passed into any POSIX compliant CLI.  
 
-- Lines with whitespace MUST be quoted with double quotes.
-- Quoted lines MUST always use double quotes.
-- Single quotes and backticks inside double quotes are allowed.
-- Double quotes inside double quotes are not supported (yet).
-- The path separator is `/`.
+~~In order to keep the command parser simple, some caveats are in place:~~
+
+- ~~Lines with whitespace MUST be quoted with double quotes.~~
+- ~~Quoted lines MUST always use double quotes.~~
+- ~~Single quotes and backticks inside double quotes are allowed.~~
+- ~~Double quotes inside double quotes are not supported (yet).~~
+- ~~The path separator is `/`.~~
+ 
+## Limitations/Gotchas
+
 - MEGA allows files to have duplicate names, which means navigating directories with duplicate names may require manual
   selection of the correct path.
 - MEGA allows slashes in node names, which may result in issues with the `cd` command and create directories when

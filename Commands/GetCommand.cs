@@ -43,7 +43,7 @@ public class GetCommand : AsyncCommand<GetCommand.Settings>
         using var archive = ZipFile.Open(path, ZipArchiveMode.Create);
         await DownloadFolderRecursive(target, target, client, nodes, archive, cancellationToken);
 
-        AnsiConsole.MarkupLine($"Directory downloaded to [blue]{path}[/].");
+        MarkupLine($"Directory downloaded to [blue]{path}[/].");
     }
     
     private static async Task DownloadFolderRecursive(
@@ -64,7 +64,7 @@ public class GetCommand : AsyncCommand<GetCommand.Settings>
                     var name = Nodes.UnravelPathToNode(root, node, nodes);
                     var entry = archive.CreateEntry(name);
                     
-                    AnsiConsole.MarkupLine($"Downloading [blue]{name}[/]...");
+                    MarkupLine($"Downloading [blue]{name}[/]...");
                     
                     await using var download = await client.DownloadAsync(node, cancellationToken: cancellationToken);
                     await using var stream = entry.Open();

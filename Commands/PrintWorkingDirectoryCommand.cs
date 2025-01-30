@@ -27,7 +27,7 @@ public class PrintWorkingDirectoryCommand : AsyncCommand<PrintWorkingDirectoryCo
             state.WorkingDirectoryPath = path;
         }
 
-        AnsiConsole.MarkupLine(path);
+        MarkupLine(path);
         return 0;
     }
 }

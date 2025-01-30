@@ -1,143 +1,73 @@
-﻿using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
 using CG.Web.MegaApiClient;
 using Micro;
+using Micro.Models;
+using static System.Environment;
+using static System.IO.Directory;
+using static System.IO.Path;
+using static System.Net.HttpStatusCode;
+using static CG.Web.MegaApiClient.ApiResultCode;
+using static Microsoft.CodeAnalysis.CommandLineParser;
 
-const string config = "./config.json";
-var delay = TimeSpan.FromMilliseconds(1000);
-
-Configuration configuration = new();
-
-AnsiConsole.Clear();
-AnsiConsole.MarkupLine("[bold yellow]Hello there![/]");
-await Task.Delay(delay: delay);
-
-AnsiConsole.MarkupLine("[yellow]Let me just set up a few things...[/]");
-AnsiConsole.WriteLine();
-await Task.Delay(delay: delay);
-
-// Synchronous
-await AnsiConsole.Status()
-    .StartAsync("Initializing...", async ctx =>
-    {
-        Thread.Sleep(timeout: delay);
-        AnsiConsole.MarkupLine("[blue][[INFO]]: Initialized.[/]");
-        ctx.Status("Checking for config file...");
-
-        Thread.Sleep(timeout: delay);
-        var exists = File.Exists(config);
-        if (!exists)
-        {
-            AnsiConsole.MarkupLine("[yellow][[WARN]]: No config file found.[/]");
-            ctx.Status("Creating config...");
-
-            Thread.Sleep(timeout: delay);
-            File.Create(config).Close();
-            await File.WriteAllTextAsync(config, JsonSerializer.Serialize(configuration));
-
-            AnsiConsole.MarkupLine("[blue][[INFO]]: Config file created.[/]");
-            ctx.Status("Loading default config...");
-        }
-        else
-        {
-            AnsiConsole.MarkupLine("[blue][[INFO]]: Config file found.[/]");
-            ctx.Status("Reading config...");
-
-            Thread.Sleep(timeout: delay);
-            var text = await File.ReadAllTextAsync(config);
-            configuration = JsonSerializer.Deserialize<Configuration>(text) ?? configuration;
-        }
-
-        Thread.Sleep(timeout: delay);
-        AnsiConsole.MarkupLine("[blue][[INFO]]: Configuration loaded successfully.[/]");
-    });
-
-AnsiConsole.Clear();
-if (!configuration.Configured)
-{
-    AnsiConsole.MarkupLine("[yellow]This is your first time running this program![/]");
-    AnsiConsole.MarkupLine("[yellow]Let's get you set up![/]");
-    AnsiConsole.WriteLine();
-
-    var name = AnsiConsole.Ask<string>("What should I call you?");
-    var username =
-        AnsiConsole.Ask<string>("[yellow]Now, enter the email address you use to sign in on mega.co.nz:[/]");
-    var password = AnsiConsole.Prompt<string>(
-        new TextPrompt<string>("[yellow]Now, enter the password you use to sign in on mega.co.nz:[/]").Secret()
-    );
-
-    AnsiConsole.WriteLine();
-
-    configuration = configuration with { Configured = true, Name = name, Username = username, Password = password };
-    await File.WriteAllTextAsync(config, JsonSerializer.Serialize(configuration));
-    AnsiConsole.MarkupLine("[blue][[INFO]]: Configuration saved successfully.[/]");
-}
-else
-{
-    AnsiConsole.MarkupLine($"[yellow]Welcome back, [blue]{configuration.Name!}[/].[/]");
-    AnsiConsole.WriteLine();
-}
-
-AnsiConsole.MarkupLine("[blue][[INFO]]: Starting up...[/]");
-AnsiConsole.MarkupLine("[blue][[INFO]]: Logging you in...[/]");
+var root = Combine(GetFolderPath(SpecialFolder.ApplicationData), "micro");
+CreateDirectory(root);
+var configuration = await ReadConfiguration() ?? new(
+    Username: Ask<string>("[yellow]Enter your mega.co.nz username:[/]"),
+    Password: Prompt(new TextPrompt<string>("[yellow]Enter your mega.co.nz password:[/]").Secret())
+);
 
 var state = ApplicationState.Instance;
-await state.Client.LoginAsync(configuration.Username!, configuration.Password!);
+try
+{
+    await state.Client.LoginAsync(configuration.Username, configuration.Password);
+    if (configuration.Name is null)
+    {
+        configuration = configuration with { Name = Ask<string>("[yellow]What should we call you?[/]") };
+    }
 
-// Set working directory to the the root of the cloud storage
-var nodes = await state.Client.GetNodesAsync();
-state.WorkingDirectoryNode = nodes.Single(x => x.Type == NodeType.Root).Id;
+    await using var stream = File.Create(Combine(root, "configuration.json"));
+    await JsonSerializer.SerializeAsync(stream, configuration);
+    var nodes = await state.Client.GetNodesAsync();
+    state.WorkingDirectoryNode = nodes.Single(x => x.Type == NodeType.Root).Id;
+    Clear();
+}
+catch (ApiException exception) when (exception.ApiResultCode is BadArguments)
+{
+    MarkupLine($"[red][[FAIL]]: Invalid credentials.[/]");
+    return;
+}
+catch (HttpRequestException exception) when (exception.StatusCode is PaymentRequired)
+{
+    MarkupLine($"[red][[FAIL]]: Invalid credentials.[/]");
+    return;
+}
 
-AnsiConsole.MarkupLine($"[blue][[INFO]]: Login successful.[/]");
+MarkupLine($"[yellow]Welcome, [blue]{configuration.Name}[/].\nLogged in as [blue]{configuration.Username}[/].[/]\n");
+MarkupLine("[yellow]Type \"help\" for a list of commands.\nType \"exit\" or \"exit --logout\" to exit.[/]\n");
 
-AnsiConsole.Clear();
-AnsiConsole.MarkupLine("[yellow]Welcome to Micro![/]");
-AnsiConsole.MarkupLine($"[yellow]Logged in as [blue]{configuration.Username!}[/].[/]");
-AnsiConsole.WriteLine();
-AnsiConsole.MarkupLine("[yellow]Type \"help\" for a list of commands.[/]");
-AnsiConsole.MarkupLine("[yellow]Type \"exit\" to exit or \"exit --logout\" to exit and log out.[/]");
-AnsiConsole.WriteLine();
-
-// Command prompt
 while (true)
 {
-    var command = AnsiConsole.Ask<string>($"[yellow]μ:{state.WorkingDirectoryPath}>[/]");
-    if (command.StartsWith("exit") && command.Split(" ").Length <= 2)
+    var command = Ask<string>($"[yellow]μ:{state.WorkingDirectoryPath}>[/]");
+    var arguments = SplitCommandLineIntoArguments(command, false).ToArray();
+    if (arguments is ["exit"] or ["exit", "--logout"])
     {
-        if (command.EndsWith("-l") || command.EndsWith("--logout")) File.Delete(config);
+        if (arguments is [_, "--logout"]) File.Delete(Combine(root, "configuration.json"));
         break;
     }
 
-    // Hook into Spectre help/version commands
-    if (command is "help" or "version") command = $"--{command}";
-
-    AppBuilder.Build().Run(ParseArgsFromString(command));
+    if (arguments is ["help" or "version"]) arguments = [$"--{arguments[0]}"];
+    AppBuilder.Build().Run(arguments);
 }
 
-AnsiConsole.MarkupLine("[yellow]Goodbye![/]");
-
-List<string> ParseArgsFromString(string input)
+async Task<Configuration?> ReadConfiguration()
 {
-    var args = new List<string>();
-    var current = new StringBuilder();
-    var inQuote = false;
-    foreach (var c in input)
+    try
     {
-        switch (c)
-        {
-            case '"':
-                inQuote = !inQuote;
-                break;
-            case ' ' when !inQuote:
-                args.Add(current.ToString());
-                current.Clear();
-                break;
-            default:
-                current.Append(c);
-                break;
-        }
+        await using var stream = File.OpenRead(Combine(root, "configuration.json"));
+        return await JsonSerializer.DeserializeAsync<Configuration>(stream);
     }
-
-    args.Add(current.ToString());
-    return args;
+    catch (Exception ex) when (ex is FileNotFoundException or JsonException)
+    {
+        return null;
+    }
 }

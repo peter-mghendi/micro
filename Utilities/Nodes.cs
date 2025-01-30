@@ -1,5 +1,6 @@
 using System.Collections.Specialized;
 using CG.Web.MegaApiClient;
+using Micro.Models;
 
 namespace Micro.Commands.Utilities;
 
@@ -107,7 +108,7 @@ public static class Nodes
                     .AddChoices(nodes)
                     .UseConverter(node => $"{node.Name} ({node.Type}) - Last Modified: {node.ModificationDate ?? node.CreationDate}");
 
-                return AnsiConsole.Prompt(prompt);
+                return Prompt(prompt);
         }
     }
 }

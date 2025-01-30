@@ -11,22 +11,22 @@ public static class AppBuilder
 
         app.Configure(config =>
         {
-            config.SetApplicationVersion("1.0.0 \"Arc\"");
+            config.SetApplicationVersion("1.0.0");
             // config.PropagateExceptions();
             
             // TODO: cp, find, rename, chat, editor
-            config.AddCommand<PrintWorkingDirectoryCommand>("pwd");
-            config.AddCommand<ListContentsCommand>("ls");
             config.AddCommand<ChangeDirectoryCommand>("cd");
+            config.AddCommand<ClearCommand>("clear");
             config.AddCommand<GetCommand>("get");
+            config.AddCommand<ListContentsCommand>("ls");
             config.AddCommand<MakeDirectoryCommand>("mkdir");
+            config.AddCommand<MoveCommand>("mv");
+            config.AddCommand<PutCommand>("put");
+            config.AddCommand<PrintWorkingDirectoryCommand>("pwd");
             config.AddCommand<RemoveCommand>("rm");
             config.AddCommand<StatusCommand>("stat");
-            config.AddCommand<MoveCommand>("mv");
-            config.AddCommand<UsernameCommand>("whoami");
-            config.AddCommand<ClearCommand>("clear");
             config.AddCommand<TouchCommand>("touch");
-            config.AddCommand<PutCommand>("put");
+            config.AddCommand<UsernameCommand>("whoami");
         });
 
         return app;

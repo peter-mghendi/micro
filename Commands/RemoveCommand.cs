@@ -1,7 +1,6 @@
 using CG.Web.MegaApiClient;
 using Micro.Commands.Utilities;
 using Spectre.Console.Cli;
-using static CG.Web.MegaApiClient.NodeType;
 
 namespace Micro.Commands;
 
@@ -22,11 +21,10 @@ public class RemoveCommand : AsyncCommand<RemoveCommand.Settings>
 
         if (node is not { Type: NodeType.File or NodeType.Directory })
         {
-            AnsiConsole.WriteException(new InvalidOperationException("Only files and directories can be downloaded."));
+            WriteException(new InvalidOperationException("Only files and directories can be downloaded."));
             return 1;
         }
         
-        // Move to trash by default
         await state.Client.DeleteAsync(node, !(settings.Force ??= false));
         return 0;
     }
