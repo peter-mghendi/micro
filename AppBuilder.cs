@@ -1,4 +1,6 @@
 using Micro.Commands;
+using Micro.Commands.Utilities;
+using Micro.Utilities;
 using Spectre.Console.Cli;
 
 namespace Micro;
@@ -11,12 +13,15 @@ public static class AppBuilder
 
         app.Configure(config =>
         {
-            config.SetApplicationVersion("1.0.0");
+            config.SetApplicationVersion(Configuration.Version);
             // config.PropagateExceptions();
+            
+            config.AddDelegate("help", _ => Help.Delegate(app));
             
             // TODO: cp, find, rename, chat, editor
             config.AddCommand<ChangeDirectoryCommand>("cd");
             config.AddCommand<ClearCommand>("clear");
+            config.AddCommand<ExitCommand>("exit");
             config.AddCommand<GetCommand>("get");
             config.AddCommand<HistoryCommand>("history");
             config.AddCommand<ListContentsCommand>("ls");
@@ -27,6 +32,7 @@ public static class AppBuilder
             config.AddCommand<RemoveCommand>("rm");
             config.AddCommand<StatusCommand>("stat");
             config.AddCommand<TouchCommand>("touch");
+            config.AddCommand<VersionCommand>("version");
             config.AddCommand<UsernameCommand>("whoami");
         });
 
